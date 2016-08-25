@@ -1,8 +1,13 @@
 package com.github.jancajthaml.csv
 
+//@TODO export as pure function
 object CSV {
 
+  //@TODO make recursive
+  //@TODO source not string but stream
+  //@TODO make parallel
   def parse(source: String, separator: Char) = {
+    //@TODO remove mutable state
     var result: Set[Map[String, String]] = Set()
 
     val lines: Array[String] = source.split("[\\r\\n]+") filterNot {
