@@ -22,15 +22,21 @@ private[jancajthaml] object x {
   *
   * @author jan.cajthaml
   */
-object read extends ((String, Char) => List[Map[String, String]]) {
+object read extends ((String, Char, Map[String, Any]) => List[Map[String, String]]) {
 
   import x.{walk}
 
-  def apply(source: String, separator: Char): List[Map[String, String]] = {
+  def apply(source: String, separator: Char, mapper: Map[String, Any]): List[Map[String, String]] = {
     val condition: String = "(\\\"[^\\\"]+\\\")|[^\\" + separator + "]+"
     val rows: Array[String] = source.split("[\\r\\n]+") filterNot {_.matches(condition)}
-    val lines: Array[Array[String]] = rows.map( e => e.split(separator) )
-    walk(lines.drop(1), lines.head)
+    val header: Array[String] = rows.head.split(separator)
+    val lines: Array[Array[String]] = rows.drop(1).map(e => e.split(separator))
+    val toRemove: Array[Int] = header.zipWithIndex.collect{ case(a, b) if mapper(a) == None => b}
+
+    walk(
+      lines.map(e => e.zipWithIndex.collect { case(a, b) if !toRemove.contains(b) => a }),
+      header.filterNot({ mapper(_) == None }).map(e => mapper(e).toString)
+    )
   }
 
 }
