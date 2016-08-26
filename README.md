@@ -1,10 +1,17 @@
 Simple vanilla CSV Parser for scala
 
-example
-
 ---
 
-val CNB: String = """25.08.2016 #165
+@example
+
+```scala
+import package com.github.jancajthaml.csv.{read => csv}
+```
+
+```scala
+
+val CNB: String = """
+25.08.2016 #165
 země|měna|množství|kód|kurz
 Austrálie|dolar|1|AUD|18,214
 Brazílie|real|1|BRL|7,435
@@ -37,14 +44,17 @@ Singapur|dolar|1|SGD|17,697
 Thajsko|baht|100|THB|69,246
 Turecko|lira|1|TRY|8,136
 USA|dolar|1|USD|23,938
-Velká Británie|libra|1|GBP|31,587"""
+Velká Británie|libra|1|GBP|31,587
+"""
 
-for (i <- read(CNB, '|', Map(
-  "země" -> None,
-  "měna" -> None,
+val mapping = Map(
   "množství" -> "amount",
   "kód" -> "currency",
   "kurz" -> "rate"
-)).toSeq) {
+)
+
+for (i <- csv(CNB, '|', mapping).toSeq) {
   println(i.map(pair => pair._1+"="+pair._2).mkString("",", ",""))
 }
+
+```

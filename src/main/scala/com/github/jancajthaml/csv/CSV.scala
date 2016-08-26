@@ -22,20 +22,20 @@ private[jancajthaml] object x {
   *
   * @author jan.cajthaml
   */
-object read extends ((String, Char, Map[String, Any]) => List[Map[String, String]]) {
+object read extends ((String, Char, Map[String, String]) => List[Map[String, String]]) {
 
   import x.{walk}
 
-  def apply(source: String, separator: Char, mapper: Map[String, Any]): List[Map[String, String]] = {
+  def apply(source: String, separator: Char, mapper: Map[String, String]): List[Map[String, String]] = {
     val condition: String = "(\\\"[^\\\"]+\\\")|[^\\" + separator + "]+"
     val rows: Array[String] = source.split("[\\r\\n]+") filterNot {_.matches(condition)}
     val header: Array[String] = rows.head.split(separator)
-    val lines: Array[Array[String]] = rows.drop(1).map(e => e.split(separator))
-    val toRemove: Array[Int] = header.zipWithIndex.collect{ case(a, b) if mapper(a) == None => b}
+    val lines: Array[Array[String]] = rows.drop(1).map(_.split(separator))
+    val toRemove: Array[Int] = header.zipWithIndex.collect{ case(a, b) if !mapper.isDefinedAt(a) => b}
 
     walk(
       lines.map(e => e.zipWithIndex.collect { case(a, b) if !toRemove.contains(b) => a }),
-      header.filterNot({ mapper(_) == None }).map(e => mapper(e).toString)
+      header.filterNot({!mapper.isDefinedAt(_)}).map(mapper)
     )
   }
 
