@@ -11,7 +11,7 @@ private[jancajthaml] object x {
     if (lines.isEmpty) {
       List.empty
     } else {
-      (for ((k, v) <- (head zip lines.head)) yield (k -> v)).toMap :: walk(lines.drop(1), head)
+      (for ((k, v) <- (head zip lines.head)) yield (k -> v.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim)).toMap :: walk(lines.drop(1), head)
     }
   }
 
