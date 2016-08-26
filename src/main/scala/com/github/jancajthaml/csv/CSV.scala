@@ -1,31 +1,39 @@
 package com.github.jancajthaml.csv
 
-//@TODO export as pure function
-object CSV {
+/**
+  * Recursion immutable based line processing
+  *
+  * @author jan.cajthaml
+  */
+private[jancajthaml] object x {
 
-  //@TODO make recursive
-  //@TODO source not string but stream
-  //@TODO make parallel
-  def parse(source: String, separator: Char) = {
-    //@TODO remove mutable state
-    var result: Set[Map[String, String]] = Set()
-
-    val lines: Array[String] = source.split("[\\r\\n]+") filterNot {
-      _.matches("(\\\"[^\\\"]+\\\")|[^\\" + separator + "]+")
+  def walk(lines: Array[Array[String]], head: Array[String]): List[Map[String, String]] = {
+    if (lines.isEmpty) {
+      List.empty
+    } else {
+      (for ((k, v) <- (head zip lines.head)) yield (k -> v)).toMap :: walk(lines.drop(1), head)
     }
-    
-    var header: Array[String] = lines.head.split(separator)
-    val data: Array[Array[String]] = lines.drop(1).map(_.split(separator))
-
-    for (line <- data) {
-      result += (for ((key, value) <- (header zip line)) yield (key -> value)).toMap
-    }
-
-    result
   }
 
 }
 
+/**
+  * read CSV data into List (Row) of Maps (colName -> Colvalue)
+  *
+  * @author jan.cajthaml
+  */
+object read extends ((String, Char) => List[Map[String, String]]) {
+
+  import x.{walk}
+
+  def apply(source: String, separator: Char): List[Map[String, String]] = {
+    val condition: String = "(\\\"[^\\\"]+\\\")|[^\\" + separator + "]+"
+    val rows: Array[String] = source.split("[\\r\\n]+") filterNot {_.matches(condition)}
+    val lines: Array[Array[String]] = rows.map( e => e.split(separator) )
+    walk(lines.drop(1), lines.head)
+  }
+
+}
 
 object Main extends App {
   
@@ -64,9 +72,7 @@ Turecko|lira|1|TRY|8,136
 USA|dolar|1|USD|23,938
 Velká Británie|libra|1|GBP|31,587"""
 
-  val x: Set[Map[String,String]] = CSV.parse(data, '|')
-
-  for (i <- x.toSeq) {
+  for (i <- read(data, '|').toSeq) {
     println(i.map(pair => pair._1+"="+pair._2).mkString("",", ",""))
   }
 
