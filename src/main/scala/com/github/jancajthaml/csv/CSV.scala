@@ -7,6 +7,8 @@ package com.github.jancajthaml.csv
   */
 object read extends ((String, Char, Map[String, String]) => List[Map[String, String]]) {
 
+  import scala.annotation.tailrec
+  
   /* scoped type for more readable code */
   type Pair = Map[String, String]
 
@@ -29,17 +31,15 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     //everything else is csv data
     val lines: Array[Array[String]] = rows.drop(1).map(_.split(separator))
     //based on `mapper` filter get cols to keep, drop others
-    val keepIndexes: Array[Int] = header.zipWithIndex.collect {
-      case (a, b) if mapper.isDefinedAt(a) => b
-    }
+    val keepIndexes: Array[Int] = header.zipWithIndex.collect {case (a, b) if mapper.isDefinedAt(a) => b}
     //Sanify value, deletes trailing characters
     def clean(v: String) = v.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim
-    //Walk row by row recursively and build Map in each step /*@tailrec */
-    def walk(x: Array[Array[String]], head: Array[String]): List[Pair] = {
+    //Walk row by row recursively and build Map in each step /* */
+    @tailrec def walk(x: Array[Array[String]], head: Array[String], result: List[Pair]): List[Pair] = {
       if (x.isEmpty) List.empty else {
-        //iterate header and data line simultanelously map header col
-        //to value col. Then recurse to next line
-        (for ((k, v) <- (head zip x.head)) yield (k -> clean(v))).toMap :: walk(x.drop(1), head)
+        //iterate header and data line simultanelously map header col to value col. Then recurse to next line
+        val step: List[Pair] = (for ((k, v) <- (head zip x.head)) yield (k -> clean(v))).toMap :: result
+        walk(x.drop(1), head, step)
       }
     }
     //enter recursion and return aggregated immutable result
@@ -47,7 +47,9 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
       //drop header values that are not wanted by `mapper` filter
       lines.map(e => e.zipWithIndex.collect {case(a, b) if keepIndexes.contains(b) => a}),
       //drop data cols that are not wanted by `mapper` filter
-      header.filterNot({!mapper.isDefinedAt(_)}).map(mapper)
+      header.filterNot({!mapper.isDefinedAt(_)}).map(mapper),
+      //enter recursion with empty List
+      List.empty[Pair]
     )
   }
 }
