@@ -15,7 +15,7 @@ private[jancajthaml] object x {
     */
   def cleanUp(value: String): String = {
     //remove double wrapped strings sometime present in csv and trim
-    value.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim)
+    value.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim
   }
 
   /**
@@ -31,7 +31,7 @@ private[jancajthaml] object x {
     } else {
       //iterate header and data line simultanelously map header col
       //to value col. Then recurse to next line
-      (for ((k, v) <- (head zip lines.head)) yield (k -> cleanUp(v)).toMap :: walk(lines.drop(1), head)
+      (for ((k, v) <- (head zip lines.head)) yield (k -> cleanUp(v))).toMap :: walk(lines.drop(1), head)
     }
   }
 
