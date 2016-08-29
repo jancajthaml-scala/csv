@@ -59,21 +59,21 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     //csv pattern is (any_until_separator,separator)*
     val csvPattern: String = "(\\\"[^\\\"]+\\\")|[^\\" + separator + "]+"
     //remove non csv lines from source
-    val rows: Array[String] = source.split("[\\r\\n]+") filterNot {_.matches(csvPattern)}
+    val rows: Array[String] = source.split("[\\r\\n]+").filter(!_.isEmpty()).filter(!_.matches(csvPattern))
     //first line is csv header
     val header: Array[String] = rows.head.split(separator)
     //everything else is csv data
     val lines: Array[Array[String]] = rows.drop(1).map(_.split(separator))
     //based on `mapper` filter get cols to keep, drop others
-    val toRemove: Array[Int] = header.zipWithIndex.collect{
+    val keepIndexes: Array[Int] = header.zipWithIndex.collect{
       case(a, b) if mapper.isDefinedAt(a) => b
     }
 
     walk(
       //drop header values that are not wanted by `mapper` filter
-      lines.map(e => e.zipWithIndex.collect { case(a, b) if !toRemove.contains(b) => a }),
+      lines.map(e => e.zipWithIndex.collect { case(a, b) if keepIndexes.contains(b) => a }),
       //drop data cols that are not wanted by `mapper` filter
-      header.filterNot({mapper.isDefinedAt(_)}).map(mapper)
+      header.filterNot({!mapper.isDefinedAt(_)}).map(mapper)
     )
   }
 
