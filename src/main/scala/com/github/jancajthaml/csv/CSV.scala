@@ -36,7 +36,7 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     def clean(v: String) = v.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim
     //Walk row by row recursively and build Map in each step /* */
     @tailrec def walk(x: Array[Array[String]], head: Array[String], result: List[Pair]): List[Pair] = {
-      if (x.isEmpty) List.empty else {
+      if (x.isEmpty) result else {
         //iterate header and data line simultanelously map header col to value col. Then recurse to next line
         val step: List[Pair] = (for ((k, v) <- (head zip x.head)) yield (k -> clean(v))).toMap :: result
         walk(x.drop(1), head, step)
