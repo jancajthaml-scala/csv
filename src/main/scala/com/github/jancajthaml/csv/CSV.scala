@@ -7,8 +7,6 @@ package com.github.jancajthaml.csv
   */
 object read extends ((String, Char, Map[String, String]) => List[Map[String, String]]) {
 
-  import scala.annotation.tailrec
-  
   /* scoped type for more readable code */
   type Pair = Map[String, String]
 
@@ -27,7 +25,7 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     //remove non csv lines from source
     val rows: Array[String] = source.split("[\\r\\n]+").filter(x => (!x.isEmpty() && !x.matches(pattern)))
     //first line is csv header
-    val header: Array[String] = rows.head.split(separator)
+    val header: Array[String] = rows.headOption.getOrElse("").split(separator)
     //everything else is csv data
     val lines: Array[Array[String]] = rows.drop(1).map(_.split(separator))
     //based on `mapper` filter get cols to keep (will drop others)
@@ -35,10 +33,10 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     //Sanify value, deletes trailing/leading quotes and spaces
     def clean(v: String) = v.replaceAll("^[\\\"\\\']+|[\\\"\\\']+$", "").trim
     //Walk row by row recursively and build Map in each step
-    @tailrec def walk(x: Array[Array[String]], head: Array[String], result: List[Pair]): List[Pair] = {
+    @scala.annotation.tailrec def walk(x: Array[Array[String]], head: Array[String], result: List[Pair]): List[Pair] = {
       if (x.isEmpty) result else {
         //iterate header and data line simultanelously map header col to value col. Then recurse to next line
-        val step: List[Pair] = result :+ (for ((k, v) <- (head zip x.head)) yield (k -> clean(v))).toMap
+        val step: List[Pair] = result :+ (for ((k, v) <- (head zip x.headOption.getOrElse(""))) yield (k -> clean(v))).toMap
         walk(x.drop(1), head, step)
       }
     }
