@@ -1,6 +1,6 @@
 Simple vanilla CSV Parser for scala
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c711a63d74874043a6ed087bce5ba19e)](https://www.codacy.com/app/jan-cajthaml/csv?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jancajthaml-scala/csv&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c711a63d74874043a6ed087bce5ba19e)](https://www.codacy.com/app/jan-cajthaml/csv?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jancajthaml-scala/csv&amp;utm_campaign=Badge_Grade) [![Dependency Status](https://www.versioneye.com/user/projects/57dc1588037c2000475cc4dc/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57dc1588037c2000475cc4dc)
 
 ---
 
