@@ -37,7 +37,7 @@ object read extends ((String, Char, Map[String, String]) => List[Map[String, Str
     @scala.annotation.tailrec def walk(x: Array[Array[String]], head: Array[String], result: List[Pair]): List[Pair] = {
       if (x.isEmpty) result else {
         //iterate header and data line simultanelously map header col to value col. Then recurse to next line
-        val step: List[Pair] = result :+ (for { (k, v) <- (head zip x.headOption.getOrElse(empty)) } yield (k -> clean(v))).toMap
+        val step: List[Pair] = result :+ (for {(k, v) <- (head zip x.headOption.getOrElse(empty))} yield (k -> clean(v))).toMap
         walk(x.drop(1), head, step)
       }
     }
