@@ -11,8 +11,7 @@ import package com.github.jancajthaml.csv.{read => csv}
 ```
 
 ```scala
-
-val CNB: String = """
+val data: String = """
 25.08.2016 #165
 země|měna|množství|kód|kurz
 Austrálie|dolar|1|AUD|18,214
@@ -49,14 +48,12 @@ USA|dolar|1|USD|23,938
 Velká Británie|libra|1|GBP|31,587
 """
 
-val mapping = Map(
-  "množství" -> "amount",
-  "kód" -> "currency",
-  "kurz" -> "rate"
-)
+csv(data, '|', Map(
+  3 -> "amount",
+  4 -> "currency",
+  5 -> "rate"
+))(6)
 
-for (i <- csv(CNB, '|', mapping).toSeq) {
-  println(i.map(pair => pair._1+"="+pair._2).mkString("",", ",""))
-}
+// Map("amount" -> "1", "currency" -> "DKK", "rate" -> "3,631")
 
 ```
