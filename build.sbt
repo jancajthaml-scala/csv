@@ -4,7 +4,7 @@ name := "csv"
 
 version in Global := "0.1.0-SNAPSHOT"
 
-description := "CSV <-> Map[String, Any]"
+description := "CSV <-> List[Map[String, String]]"
 
 scalaVersion in Global := "2.11.8"
 
@@ -29,7 +29,7 @@ lazy val test = Project(
       "Artima Maven Repository" at "http://repo.artima.com/releases"
     ),
     libraryDependencies ++= Seq(
-      "com.storm-enroute" %% "scalameter" % "0.8-SNAPSHOT" % "test",
+      "com.storm-enroute" %% "scalameter" % "0.7",
       "org.scalactic" %% "scalactic" % "3.0.0",
       "org.scalatest" %% "scalatest" % "3.0.0" % "test"
     ),
