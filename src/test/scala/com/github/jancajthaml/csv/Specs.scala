@@ -1,7 +1,6 @@
 package com.github.jancajthaml.csv
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
+import org.scalatest.{FlatSpec, Matchers}
 
 class CSVSpecs extends FlatSpec with Matchers {
 
