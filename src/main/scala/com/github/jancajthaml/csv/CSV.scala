@@ -50,6 +50,6 @@ object read extends ((String, Char, Map[Int, String]) => List[Map[String, String
       lines.headOption.getOrElse(empty).zipWithIndex.collect {case(a, b) if keepIndexes.contains(b) => mapper(b + 1)},
       //enter recursion with empty List
       List.empty[Pair]
-    )
+    ).filterNot(_.isEmpty)
   }
 }
