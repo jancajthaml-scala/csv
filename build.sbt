@@ -2,7 +2,7 @@ import sbt.Keys._
 
 name := "csv"
 
-version in Global := "0.1.0-SNAPSHOT"
+version in Global := "1.0.0"
 
 description := "CSV <-> List[Map[String, String]]"
 
